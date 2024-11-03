@@ -8,6 +8,17 @@ defmodule HeadsUpWeb.Router do
     plug :put_root_layout, html: {HeadsUpWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :snoop
+  end
+
+  def snoop(conn, _opts) do
+    answer = ~w(Yes No Maybe) |> Enum.random()
+
+    conn = assign(conn, :answer, answer)
+
+    IO.inspect(conn)
+
+    conn
   end
 
   pipeline :api do
