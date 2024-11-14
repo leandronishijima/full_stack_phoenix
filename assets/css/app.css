@@ -3,3 +3,23 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+@layer components {
+  /* Tips */
+
+  .tips h1 {
+    @apply text-xl font-extrabold;
+  }
+
+  .tips p {
+    @apply mt-4;
+  }
+
+  .tips ol {
+    @apply list-decimal list-inside space-y-2 mt-4;
+  }
+
+  .tips ol li a {
+    @apply hover:text-sky-600 transition ease-in-out duration-150;
+  }
+}
