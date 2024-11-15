@@ -12,6 +12,9 @@ defmodule HeadsUpWeb.EstimatorLive do
     <div class="estimator" |>
       <h1>Raffle Estimator</h1>
       <section>
+        <button phx-click="add" phx-value-quantity="5">
+          + 5
+        </button>
         <div>
           <%= @tickets %>
         </div>
@@ -26,5 +29,11 @@ defmodule HeadsUpWeb.EstimatorLive do
       </section>
     </div>
     """
+  end
+
+  def handle_event("add", %{"quantity" => quantity}, socket) do
+    socket = update(socket, :tickets, &(&1 + String.to_integer(quantity)))
+
+    {:noreply, socket}
   end
 end
