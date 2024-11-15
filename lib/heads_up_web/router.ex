@@ -16,8 +16,6 @@ defmodule HeadsUpWeb.Router do
 
     conn = assign(conn, :answer, answer)
 
-    IO.inspect(conn)
-
     conn
   end
 
@@ -30,7 +28,9 @@ defmodule HeadsUpWeb.Router do
 
     get "/", PageController, :home
     get "/rules", RuleController, :index
+    get "/rules/:id", RuleController, :show
     get "/tips", TipsController, :index
+    get "/tips/:id", TipsController, :show
   end
 
   # Other scopes may use custom stacks.
