@@ -23,6 +23,7 @@
     @apply hover:text-sky-600 transition ease-in-out duration-150;
   }
 
+
   /* Rules */
 
   .rules h1 {
@@ -66,6 +67,33 @@
   .estimator form input {
     @apply text-xl w-20 rounded-lg text-gray-900 focus:ring-1 focus:border-sky-600;
   }
+
+  /* EffortLive */
+
+  .effort h1 {
+    @apply text-4xl font-extrabold text-center mb-8;
+  }
+
+  .effort button {
+    @apply py-2 px-4 bg-sky-500 text-white rounded-xl hover:bg-sky-700 active:bg-sky-900 text-2xl;
+  }
+
+  .effort section {
+    @apply flex justify-center items-center gap-x-10 text-3xl tabular-nums;
+  }
+
+  .effort form {
+    @apply mt-8 text-center text-2xl;
+  }
+
+  .effort form label {
+    @apply text-xl text-gray-600;
+  }
+
+  .effort form input {
+    @apply text-xl w-20 rounded-lg text-gray-900 focus:ring-1 focus:border-sky-600;
+  }
+
 
   /* RaffleLive.Index */
 
