@@ -35,6 +35,7 @@ defmodule HeadsUpWeb.Router do
     live "/estimator", EstimatorLive
     live "/effort", EffortLive
     live "/incidents", IncidentLive.Index
+    live "/incidents/:id", IncidentLive.Show
   end
 
   # Other scopes may use custom stacks.
