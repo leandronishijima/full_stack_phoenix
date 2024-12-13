@@ -9,9 +9,8 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     socket =
       socket
       |> assign(page_title: "Incidents")
-      |> stream(:incidents, Incidents.filter_incidents())
-
-    IO.inspect(socket.assigns.streams.incidents, label: "mount")
+      |> stream(:incidents, Incidents.list_incidents())
+      |> assign(:form, to_form(%{}))
 
     socket =
       attach_hook(socket, :log_stream, :after_render, fn
@@ -31,6 +30,9 @@ defmodule HeadsUpWeb.IncidentLive.Index do
         Thanks for pitching in. <%= vibe %>
       </:tagline>
     </.headline>
+
+    <.filter_form form={@form} />
+
     <div class="incident-index">
       <div class="incidents" id="incidents" phx-update="stream">
         <.incident_card
@@ -40,6 +42,21 @@ defmodule HeadsUpWeb.IncidentLive.Index do
         />
       </div>
     </div>
+    """
+  end
+
+  def filter_form(assigns) do
+    ~H"""
+    <.form for={@form} id="filter-form">
+      <.input field={@form[:q]} placeholder="Search..." autocomplete="off" />
+      <.input
+        type="select"
+        field={@form[:status]}
+        options={Ecto.Enum.values(Incident, :status)}
+        prompt="Status"
+      />
+      <.input type="select" prompt="Sort By" field={@form[:sort_by]} options={[:name, :priority]} />
+    </.form>
     """
   end
 
