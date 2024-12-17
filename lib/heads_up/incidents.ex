@@ -12,11 +12,11 @@ defmodule HeadsUp.Incidents do
     Repo.get!(Incident, id)
   end
 
-  def filter_incidents do
+  def filter_incidents(filter) do
     query =
       from i in Incident,
-        where: [status: :resolved],
-        where: ilike(i.name, "%in%"),
+        where: [status: ^filter["status"]],
+        where: ilike(i.name, ^"%#{filter["q"]}%"),
         order_by: [desc: :name]
 
     Repo.all(query)
