@@ -35,6 +35,9 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
     <div class="incident-index">
       <div class="incidents" id="incidents" phx-update="stream">
+        <div id="empty" class="no-results only:block hidden">
+          No incidents found. Try changing your filters.
+        </div>
         <.incident_card
           :for={{dom_id, incident} <- @streams.incidents}
           incident={incident}
@@ -48,14 +51,23 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   def filter_form(assigns) do
     ~H"""
     <.form for={@form} id="filter-form" phx-change="filter">
-      <.input field={@form[:q]} placeholder="Search..." autocomplete="off" />
+      <.input field={@form[:q]} placeholder="Search..." autocomplete="off" phx-debounce="500" />
       <.input
         type="select"
         field={@form[:status]}
         options={Ecto.Enum.values(Incident, :status)}
         prompt="Status"
       />
-      <.input type="select" prompt="Sort By" field={@form[:sort_by]} options={[:name, :priority]} />
+      <.input
+        type="select"
+        prompt="Sort By"
+        field={@form[:sort_by]}
+        options={[
+          Name: "name",
+          "Priority Desc": "priority_desc",
+          "Priority Asc": "priority_asc"
+        ]}
+      />
     </.form>
     """
   end
