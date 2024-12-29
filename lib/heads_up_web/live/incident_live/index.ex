@@ -6,20 +6,25 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   import HeadsUpWeb.CustomComponents
 
   def mount(_params, _session, socket) do
+    IO.inspect(self(), label: "MOUNT")
     {:ok, socket}
   end
 
   def handle_params(params, _uri, socket) do
+    IO.inspect(self(), label: "HANDLE PARAMS")
+
     socket =
       socket
       |> assign(page_title: "Incidents")
       |> assign(:form, to_form(params))
-      |> stream(:incidents, Incidents.filter_incidents(params))
+      |> stream(:incidents, Incidents.filter_incidents(params), reset: true)
 
     {:noreply, socket}
   end
 
   def render(assigns) do
+    IO.inspect(self(), label: "RENDER")
+
     ~H"""
     <.headline>
       <.icon name="hero-trophy-mini" /> 25 Incidents Resolved This Month!
@@ -66,7 +71,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
         ]}
       />
 
-      <.link navigate={~p"/incidents"}>
+      <.link patch={~p"/incidents"}>
         Reset
       </.link>
     </.form>
@@ -99,7 +104,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
       |> Map.take(~w(q status sort_by))
       |> Map.reject(fn {_, v} -> v == "" end)
 
-    socket = push_navigate(socket, to: ~p"/incidents?#{params}")
+    socket = push_patch(socket, to: ~p"/incidents?#{params}")
 
     {:noreply, socket}
   end
