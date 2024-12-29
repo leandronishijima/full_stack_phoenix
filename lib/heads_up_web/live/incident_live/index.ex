@@ -94,11 +94,6 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   end
 
   def handle_event("filter", params, socket) do
-    socket =
-      socket
-      |> assign(:form, to_form(params))
-      |> stream(:incidents, Incidents.filter_incidents(params), reset: true)
-
     params =
       params
       |> Map.take(~w(q status sort_by))
