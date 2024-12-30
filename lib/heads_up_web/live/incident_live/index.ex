@@ -6,13 +6,10 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   import HeadsUpWeb.CustomComponents
 
   def mount(_params, _session, socket) do
-    IO.inspect(self(), label: "MOUNT")
     {:ok, socket}
   end
 
   def handle_params(params, _uri, socket) do
-    IO.inspect(self(), label: "HANDLE PARAMS")
-
     socket =
       socket
       |> assign(page_title: "Incidents")
@@ -23,8 +20,6 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   end
 
   def render(assigns) do
-    IO.inspect(self(), label: "RENDER")
-
     ~H"""
     <.headline>
       <.icon name="hero-trophy-mini" /> 25 Incidents Resolved This Month!
