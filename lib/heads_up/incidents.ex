@@ -55,6 +55,8 @@ defmodule HeadsUp.Incidents do
         order_by: [asc: :priority],
         limit: 3
 
+    Process.sleep(2000)
+
     Repo.all(query)
   end
 end
