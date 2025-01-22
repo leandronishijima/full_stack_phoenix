@@ -16,6 +16,19 @@ defmodule HeadsUpWeb.AdminIncidentLive.Index do
   def render(assigns) do
     ~H"""
     <div class="admin-index">
+      <.button phx-click={
+        JS.toggle(
+          to: "#joke",
+          in: "fade-in",
+          out: "fade-out"
+        )
+      }>
+        Toggle Joke
+      </.button>
+
+      <div id="joke" class="joke hidden" phx-click={JS.toggle_class("blur")}>
+        Why shouldn't you trust trees?
+      </div>
       <.header>
         {@page_title}
         <:actions>
@@ -41,8 +54,8 @@ defmodule HeadsUpWeb.AdminIncidentLive.Index do
             Edit
           </.link>
         </:col>
-        <:col :let={{_dom_id, incident}}>
-          <.link phx-click="delete" phx-value-id={incident.id} data-confirm="Are you sure?">
+        <:col :let={{dom_id, incident}}>
+          <.link phx-click={delete_and_hide(dom_id, incident)} data-confirm="Are you sure?">
             <.icon name="hero-trash" class="h-4 w-4" />
           </.link>
         </:col>
@@ -56,5 +69,11 @@ defmodule HeadsUpWeb.AdminIncidentLive.Index do
     {:ok, _} = Admin.delete_incident(incident)
 
     {:noreply, stream_delete(socket, :incidents, incident)}
+  end
+
+  def delete_and_hide(dom_id, incident) do
+    "delete"
+    |> JS.push(value: %{id: incident.id})
+    |> JS.hide(to: "##{dom_id}", transition: "fade-out")
   end
 end
