@@ -37,6 +37,17 @@ defmodule HeadsUp.Categories do
   """
   def get_category!(id), do: Repo.get!(Category, id)
 
+  def get_category_with_incidents!(id) do
+    Category
+    |> Repo.get!(id)
+    |> Repo.preload(:incidents)
+  end
+
+  def category_names_and_ids() do
+    query = from c in Category, order_by: :name, select: {c.name, c.id}
+    Repo.all(query)
+  end
+
   @doc """
   Creates a category.
 

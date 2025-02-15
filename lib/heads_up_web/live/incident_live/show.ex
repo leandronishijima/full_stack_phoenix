@@ -30,13 +30,16 @@ defmodule HeadsUpWeb.IncidentLive.Show do
         <section>
           <.badge status={@incident.status} />
           <header>
-            <h2>Flat Tire</h2>
+            <div>
+              <h2>{@incident.name}</h2>
+              <h3>{@incident.category.name}</h3>
+            </div>
             <div class="priority">
-              <%= @incident.priority %>
+              {@incident.priority}
             </div>
           </header>
           <div class="description">
-            <%= @incident.description %>
+            {@incident.description}
           </div>
         </section>
       </div>
@@ -63,13 +66,14 @@ defmodule HeadsUpWeb.IncidentLive.Show do
         </:loading>
         <:failed :let={{:error, reason}}>
           <div class="failed">
-            Whoops: <%= reason %>
+            Whoops: {reason}
           </div>
         </:failed>
         <ul class="incidents">
           <li :for={incident <- result}>
             <.link navigate={~p"/incidents/#{incident}"}>
-              <img src={incident.image_path} /> <%= incident.name %>
+              <img src={incident.image_path} />
+              {incident.name}
             </.link>
           </li>
         </ul>
