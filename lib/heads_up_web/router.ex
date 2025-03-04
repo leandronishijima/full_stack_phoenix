@@ -52,6 +52,8 @@ defmodule HeadsUpWeb.Router do
 
     get "/incidents", IncidentController, :index
     get "/incidents/:id", IncidentController, :show
+    post "/incidents/", IncidentController, :create
+
     get "/categories/:id/incidents", CategoryController, :show
   end
 
