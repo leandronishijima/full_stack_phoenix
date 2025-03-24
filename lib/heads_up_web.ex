@@ -42,8 +42,9 @@ defmodule HeadsUpWeb do
         formats: [:html, :json],
         layouts: [html: HeadsUpWeb.Layouts]
 
+      use Gettext, backend: MyAppWeb.Gettext
+
       import Plug.Conn
-      import HeadsUpWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -81,11 +82,13 @@ defmodule HeadsUpWeb do
 
   defp html_helpers do
     quote do
+      # Translation
+      use Gettext, backend: HeadsUpWeb.Gettext
+
       # HTML escaping functionality
       import Phoenix.HTML
-      # Core UI components and translation
+      # Core UI components
       import HeadsUpWeb.CoreComponents
-      import HeadsUpWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

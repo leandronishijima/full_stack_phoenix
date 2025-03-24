@@ -54,6 +54,8 @@ defmodule HeadsUpWeb.IncidentLive.Show do
     """
   end
 
+  attr :incidents, Phoenix.LiveView.AsyncResult, required: true
+
   def urgent_incidents(assigns) do
     ~H"""
     <section>
@@ -72,8 +74,7 @@ defmodule HeadsUpWeb.IncidentLive.Show do
         <ul class="incidents">
           <li :for={incident <- result}>
             <.link navigate={~p"/incidents/#{incident}"}>
-              <img src={incident.image_path} />
-              {incident.name}
+              <img src={incident.image_path} /> {incident.name}
             </.link>
           </li>
         </ul>

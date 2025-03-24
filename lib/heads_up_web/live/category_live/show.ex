@@ -28,8 +28,7 @@ defmodule HeadsUpWeb.CategoryLive.Show do
       <ul class="incidents">
         <li :for={incident <- @category.incidents}>
           <.link navigate={~p"/incidents/#{incident}"}>
-            <img src={incident.image_path} />
-            {incident.name}
+            <img src={incident.image_path} /> {incident.name}
           </.link>
         </li>
       </ul>

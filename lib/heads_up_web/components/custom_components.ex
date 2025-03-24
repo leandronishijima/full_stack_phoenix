@@ -1,7 +1,7 @@
 defmodule HeadsUpWeb.CustomComponents do
   use HeadsUpWeb, :html
 
-  attr :status, :atom, values: [:pending, :resolved, :canceled], required: true
+  attr :status, :atom, values: [:pending, :resolved, :canceled], default: :pending
 
   def badge(assigns) do
     ~H"""
@@ -11,7 +11,7 @@ defmodule HeadsUpWeb.CustomComponents do
       @status == :pending && "text-amber-600 border-amber-600",
       @status == :canceled && "text-gray-600 border-gray-600"
     ]}>
-      <%= @status %>
+      {@status}
     </div>
     """
   end
@@ -25,10 +25,10 @@ defmodule HeadsUpWeb.CustomComponents do
     ~H"""
     <div class="headline">
       <h1>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </h1>
-      <div :for={tag <- @tagline} class="tagline">
-        <%= render_slot(tag, @emoji) %>
+      <div :for={tagline <- @tagline} class="tagline">
+        {render_slot(tagline, @emoji)}
       </div>
     </div>
     """

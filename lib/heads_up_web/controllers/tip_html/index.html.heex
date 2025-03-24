@@ -4,9 +4,12 @@
     <%= for tip <- @tips do %>
       <li>
         <a href={~p"/tips/#{tip.id}"}>
-          <%= tip.text %>
+          {tip.text}
         </a>
       </li>
     <% end %>
   </ol>
+  <p>
+    {@emojis}
+  </p>
 </div>

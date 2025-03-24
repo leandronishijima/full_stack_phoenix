@@ -6,7 +6,15 @@ defmodule HeadsUpWeb.EffortLive do
       Process.send_after(self(), :tick, 2000)
     end
 
-    {:ok, assign(socket, responders: 0, minutes_per_responder: 10, page_title: "Effort")}
+    socket =
+      assign(
+        socket,
+        responders: 0,
+        minutes_per_responder: 10,
+        page_title: "Effort"
+      )
+
+    {:ok, socket}
   end
 
   def render(assigns) do
@@ -18,15 +26,15 @@ defmodule HeadsUpWeb.EffortLive do
           + 3
         </button>
         <div>
-          <%= @responders %>
+          {@responders}
         </div>
         &times;
         <div>
-          <%= @minutes_per_responder %>
+          {@minutes_per_responder}
         </div>
         =
         <div>
-          <%= @responders * @minutes_per_responder %>
+          {@responders * @minutes_per_responder}
         </div>
       </section>
 
@@ -40,6 +48,7 @@ defmodule HeadsUpWeb.EffortLive do
 
   def handle_event("add", %{"quantity" => quantity}, socket) do
     socket = update(socket, :responders, &(&1 + String.to_integer(quantity)))
+
     {:noreply, socket}
   end
 
@@ -50,7 +59,6 @@ defmodule HeadsUpWeb.EffortLive do
 
   def handle_info(:tick, socket) do
     Process.send_after(self(), :tick, 2000)
-    socket = update(socket, :responders, &(&1 + 3))
-    {:noreply, socket}
+    {:noreply, update(socket, :responders, &(&1 + 3))}
   end
 end

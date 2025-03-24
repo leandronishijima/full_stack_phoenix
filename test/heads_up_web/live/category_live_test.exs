@@ -3,6 +3,7 @@ defmodule HeadsUpWeb.CategoryLiveTest do
 
   import Phoenix.LiveViewTest
   import HeadsUp.CategoriesFixtures
+  import HeadsUp.AccountsFixtures
 
   @create_attrs %{name: "some name", slug: "some slug"}
   @update_attrs %{name: "some updated name", slug: "some updated slug"}
@@ -14,6 +15,12 @@ defmodule HeadsUpWeb.CategoryLiveTest do
   end
 
   describe "Index" do
+    setup %{conn: conn} do
+      password = valid_user_password()
+      user = user_fixture(%{password: password})
+      %{conn: log_in_user(conn, user), user: user, password: password}
+    end
+
     setup [:create_category]
 
     test "lists all categories", %{conn: conn, category: category} do
@@ -81,9 +88,23 @@ defmodule HeadsUpWeb.CategoryLiveTest do
       assert index_live |> element("#categories-#{category.id} a", "Delete") |> render_click()
       refute has_element?(index_live, "#categories-#{category.id}")
     end
+
+    test "redirects if user is not logged in" do
+      conn = build_conn()
+      {:error, redirect} = live(conn, ~p"/categories")
+      assert {:redirect, %{to: path, flash: flash}} = redirect
+      assert path == ~p"/users/log-in"
+      assert %{"error" => "You must log in to access this page."} = flash
+    end
   end
 
   describe "Show" do
+    setup %{conn: conn} do
+      password = valid_user_password()
+      user = user_fixture(%{password: password})
+      %{conn: log_in_user(conn, user), user: user, password: password}
+    end
+
     setup [:create_category]
 
     test "displays category", %{conn: conn, category: category} do
@@ -117,6 +138,14 @@ defmodule HeadsUpWeb.CategoryLiveTest do
       html = render(show_live)
       assert html =~ "Category updated successfully"
       assert html =~ "some updated name"
+    end
+
+    test "redirects if user is not logged in" do
+      conn = build_conn()
+      {:error, redirect} = live(conn, ~p"/categories")
+      assert {:redirect, %{to: path, flash: flash}} = redirect
+      assert path == ~p"/users/log-in"
+      assert %{"error" => "You must log in to access this page."} = flash
     end
   end
 end

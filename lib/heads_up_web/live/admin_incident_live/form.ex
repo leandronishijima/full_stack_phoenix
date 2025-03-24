@@ -1,5 +1,4 @@
 defmodule HeadsUpWeb.AdminIncidentLive.Form do
-  alias HeadsUp.Admin
   use HeadsUpWeb, :live_view
 
   alias HeadsUp.Admin
@@ -9,14 +8,15 @@ defmodule HeadsUpWeb.AdminIncidentLive.Form do
   def mount(params, _session, socket) do
     socket =
       socket
-      |> assign(:categories_options, Categories.category_names_and_ids())
+      |> assign(:category_options, Categories.category_names_and_ids())
       |> apply_action(socket.assigns.live_action, params)
 
-    {:ok, apply_action(socket, socket, params)}
+    {:ok, socket}
   end
 
-  def apply_action(socket, :new, _params) do
+  defp apply_action(socket, :new, _params) do
     incident = %Incident{}
+
     changeset = Admin.change_incident(incident)
 
     socket
@@ -25,12 +25,13 @@ defmodule HeadsUpWeb.AdminIncidentLive.Form do
     |> assign(:incident, incident)
   end
 
-  def apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :edit, %{"id" => id}) do
     incident = Admin.get_incident!(id)
+
     changeset = Admin.change_incident(incident)
 
     socket
-    |> assign(:page_title, "New Incident")
+    |> assign(:page_title, "Edit Incident")
     |> assign(:form, to_form(changeset))
     |> assign(:incident, incident)
   end
@@ -52,7 +53,7 @@ defmodule HeadsUpWeb.AdminIncidentLive.Form do
         type="select"
         label="Status"
         prompt="Choose a status"
-        options={Ecto.Enum.values(Incident, :status)}
+        options={[:pending, :resolved, :canceled]}
       />
 
       <.input
@@ -60,7 +61,7 @@ defmodule HeadsUpWeb.AdminIncidentLive.Form do
         type="select"
         label="Category"
         prompt="Choose a category"
-        options={@categories_options}
+        options={@category_options}
       />
 
       <.input field={@form[:image_path]} label="Image Path" />
@@ -69,23 +70,24 @@ defmodule HeadsUpWeb.AdminIncidentLive.Form do
         <.button phx-disable-with="Saving...">Save Incident</.button>
       </:actions>
     </.simple_form>
+
     <.back navigate={~p"/admin/incidents"}>Back</.back>
     """
   end
 
   def handle_event("validate", %{"incident" => incident_params}, socket) do
-    changeset = Admin.change_incident(%Incident{}, incident_params)
+    changeset = Admin.change_incident(socket.assigns.incident, incident_params)
 
     socket = assign(socket, :form, to_form(changeset, action: :validate))
 
     {:noreply, socket}
   end
 
-  def handle_event("save", %{"incident" => incident}, socket) do
-    save_incident(socket, socket.assigns.live_action, incident)
+  def handle_event("save", %{"incident" => incident_params}, socket) do
+    save_incident(socket, socket.assigns.live_action, incident_params)
   end
 
-  def save_incident(socket, :new, incident_params) do
+  defp save_incident(socket, :new, incident_params) do
     case Admin.create_incident(incident_params) do
       {:ok, _incident} ->
         socket =
@@ -101,7 +103,7 @@ defmodule HeadsUpWeb.AdminIncidentLive.Form do
     end
   end
 
-  def save_incident(socket, :edit, incident_params) do
+  defp save_incident(socket, :edit, incident_params) do
     case Admin.update_incident(socket.assigns.incident, incident_params) do
       {:ok, _incident} ->
         socket =

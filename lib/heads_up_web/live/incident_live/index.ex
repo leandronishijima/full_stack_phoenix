@@ -1,9 +1,8 @@
 defmodule HeadsUpWeb.IncidentLive.Index do
   use HeadsUpWeb, :live_view
 
-  alias HeadsUp.Incidents.Incident
-  alias HeadsUp.Categories
   alias HeadsUp.Incidents
+  alias HeadsUp.Categories
   import HeadsUpWeb.CustomComponents
 
   def mount(_params, _session, socket) do
@@ -16,7 +15,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
   def handle_params(params, _uri, socket) do
     socket =
       socket
-      |> assign(page_title: "Incidents")
+      |> assign(:page_title, "Incidents")
       |> assign(:form, to_form(params))
       |> stream(:incidents, Incidents.filter_incidents(params), reset: true)
 
@@ -25,19 +24,19 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   def render(assigns) do
     ~H"""
-    <.headline>
-      <.icon name="hero-trophy-mini" /> 25 Incidents Resolved This Month!
-      <:tagline :let={vibe}>
-        Thanks for pitching in. {vibe}
-      </:tagline>
-    </.headline>
-
-    <.filter_form form={@form} category_options={@category_options} />
-
     <div class="incident-index">
+      <.headline>
+        <.icon name="hero-trophy-mini" /> 25 Incidents Resolved This Month!
+        <:tagline :let={vibe}>
+          Thanks for pitching in. {vibe}
+        </:tagline>
+      </.headline>
+
+      <.filter_form form={@form} category_options={@category_options} />
+
       <div class="incidents" id="incidents" phx-update="stream">
         <div id="empty" class="no-results only:block hidden">
-          No incidents found. Try changing your filters.
+          😢 No incidents found. Try changing your filters.
         </div>
         <.incident_card
           :for={{dom_id, incident} <- @streams.incidents}
@@ -51,27 +50,26 @@ defmodule HeadsUpWeb.IncidentLive.Index do
 
   def filter_form(assigns) do
     ~H"""
-    <.form for={@form} id="filter-form" phx-change="filter">
+    <.form for={@form} id="filter-form" phx-change="filter" phx-submit="filter">
       <.input field={@form[:q]} placeholder="Search..." autocomplete="off" phx-debounce="500" />
       <.input
         type="select"
         field={@form[:status]}
-        options={Ecto.Enum.values(Incident, :status)}
         prompt="Status"
+        options={[:pending, :resolved, :canceled]}
       />
       <.input type="select" field={@form[:category]} prompt="Category" options={@category_options} />
       <.input
         type="select"
-        prompt="Sort By"
         field={@form[:sort_by]}
+        prompt="Sort By"
         options={[
           Name: "name",
-          "Priority Desc": "priority_desc",
-          "Priority Asc": "priority_asc",
+          "Priority: High to Low": "priority_asc",
+          "Priority: Low to High": "priority_desc",
           Category: "category"
         ]}
       />
-
       <.link patch={~p"/incidents"}>
         Reset
       </.link>
@@ -79,7 +77,7 @@ defmodule HeadsUpWeb.IncidentLive.Index do
     """
   end
 
-  attr :incident, Incident, required: true
+  attr :incident, HeadsUp.Incidents.Incident, required: true
   attr :id, :string, required: true
 
   def incident_card(assigns) do
