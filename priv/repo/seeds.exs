@@ -24,6 +24,16 @@ _alex =
   })
   |> Repo.insert!()
 
+_admin =
+  %User{}
+  |> User.registration_changeset(%{
+    email: "admin@example.com",
+    username: "admin",
+    password: "supersecret1",
+    is_admin: true
+  })
+  |> Repo.insert!()
+
 animals =
   %Category{name: "Animals & Wildlife", slug: "animals-and-wildlife"}
   |> Repo.insert!()

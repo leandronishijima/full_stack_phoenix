@@ -350,4 +350,10 @@ defmodule HeadsUp.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  def promote_to_admin(user) do
+    user
+    |> Ecto.Changeset.change(%{is_admin: true})
+    |> Repo.update()
+  end
 end
