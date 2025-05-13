@@ -17,6 +17,14 @@ defmodule HeadsUp.Incidents do
     |> Repo.all()
   end
 
+  def list_responses(incident) do
+    incident
+    |> Ecto.assoc(:responses)
+    |> preload(:user)
+    |> order_by(desc: :inserted_at)
+    |> Repo.all()
+  end
+
   defp with_status(query, status)
        when status in ~w(pending resolved canceled) do
     where(query, status: ^status)
