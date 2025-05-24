@@ -50,6 +50,7 @@ defmodule HeadsUpWeb.Router do
       live "/admin/incidents", AdminIncidentLive.Index
       live "/admin/incidents/new", AdminIncidentLive.Form, :new
       live "/admin/incidents/:id/edit", AdminIncidentLive.Form, :edit
+      live "/users", UserLive.Index
 
       live "/categories", CategoryLive.Index, :index
       live "/categories/new", CategoryLive.Form, :new
