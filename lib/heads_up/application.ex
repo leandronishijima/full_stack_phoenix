@@ -14,6 +14,7 @@ defmodule HeadsUp.Application do
       {Phoenix.PubSub, name: HeadsUp.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: HeadsUp.Finch},
+      HeadsUpWeb.Presence,
       # Start a worker by calling: HeadsUp.Worker.start_link(arg)
       # {HeadsUp.Worker, arg},
       # Start to serve requests, typically the last entry

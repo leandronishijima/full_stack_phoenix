@@ -4,6 +4,7 @@ defmodule HeadsUpWeb.IncidentLive.Show do
   alias HeadsUp.Incidents
   alias HeadsUp.Responses
   alias HeadsUp.Responses.Response
+  alias HeadsUpWeb.Presence
   import HeadsUpWeb.CustomComponents
 
   on_mount {HeadsUpWeb.UserAuth, :mount_current_user}
@@ -16,9 +17,22 @@ defmodule HeadsUpWeb.IncidentLive.Show do
   end
 
   def handle_params(%{"id" => id}, _uri, socket) do
+    %{current_user: user} = socket.assigns
+
     if connected?(socket) do
       Incidents.subscribe(id)
+
+      {:ok, _} =
+        Presence.track(self(), topic(id), user.username, %{online_at: System.system_time(:second)})
     end
+
+    presences =
+      id
+      |> topic()
+      |> Presence.list()
+      |> Enum.map(fn {username, %{metas: metas}} ->
+        %{id: username, metas: metas}
+      end)
 
     incident = Incidents.get_incident!(id)
 
@@ -30,12 +44,15 @@ defmodule HeadsUpWeb.IncidentLive.Show do
       |> assign(:page_title, incident.name)
       |> stream(:responses, responses)
       |> assign(:response_count, Enum.count(responses))
+      |> stream(:presences, presences)
       |> assign_async(:urgent_incidents, fn ->
         {:ok, %{urgent_incidents: Incidents.urgent_incidents(incident)}}
       end)
 
     {:noreply, socket}
   end
+
+  defp topic(incident_id), do: "incident_onlookers:#{incident_id}"
 
   def render(assigns) do
     ~H"""
@@ -99,11 +116,26 @@ defmodule HeadsUpWeb.IncidentLive.Show do
           </div>
           <div class="right">
             <.urgent_incidents incidents={@urgent_incidents} />
+            <.onlookers :if={@current_user} presences={@streams.presences} />
           </div>
         </div>
         <.back navigate={~p"/incidents"}>All Incidents</.back>
       </div>
     </div>
+    """
+  end
+
+  def onlookers(assigns) do
+    ~H"""
+    <section>
+      <h4>Onlookers</h4>
+      <ul class="presences" id="onlookers" phx-update="stream">
+        <li :for={{dom_id, %{id: username, metas: metas}} <- @presences} id={dom_id}>
+          <.icon name="hero-user-circle-solid" class="w-5 h-5" />
+          {username} ({length(metas)})
+        </li>
+      </ul>
+    </section>
     """
   end
 
